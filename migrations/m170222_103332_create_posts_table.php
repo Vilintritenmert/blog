@@ -18,7 +18,7 @@ class m170222_103332_create_posts_table extends Migration
                                       ->notNull(),
             'title'            =>$this->string(255)
                                       ->notNull(),
-            'description'      =>$this->string(1024)
+            'description'      =>$this->string(5024)
                                       ->notNull(),
             'short_description'=>$this->string(255)
                                       ->notNull(),
@@ -32,17 +32,22 @@ class m170222_103332_create_posts_table extends Migration
         ]);
 
         $this->createIndex(
-            'idx-post-author_id',
+            'idx-posts-author_id',
             'posts',
             'author_id'
         );
 
         $this->createIndex(
-            'idx-post-publicated',
+            'idx-posts-created_at',
+            'posts',
+            'created_at'
+        );
+
+        $this->createIndex(
+            'idx-posts-publicated',
             'posts',
             'publicated'
         );
-
     }
 
     /**
@@ -52,6 +57,16 @@ class m170222_103332_create_posts_table extends Migration
     {
         $this->dropIndex(
             'idx-posts-author_id',
+            'posts'
+        );
+
+        $this->dropIndex(
+            'idx-posts-created_at',
+            'posts'
+        );
+
+        $this->dropIndex(
+            'idx-posts-publicated',
             'posts'
         );
 

@@ -5,17 +5,17 @@ use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use dosamigos\ckeditor\CKEditor;
 
-$this->title='Blog - '. $post->title;
+$this->title='Blog - ' . $post->title;
 ?>
 <div class="site-view">
     <h1><?= $post->title; ?></h1>
     <div class="description">
-        <?php if($post->image): ?>
-            <img src="<?=$post->image?>" alt="<?=$post->title?>">
+        <?php if ($post->image): ?>
+            <img src="<?= $post->image ?>" alt="<?= $post->title ?>">
         <?php endif ?>
-        <?php if($post->video): ?>
+        <?php if ($post->video): ?>
             <video width="320" height="240" controls>
-                <source src="<?=$post->video?>">
+                <source src="<?= $post->video ?>">
                 Your browser does not support the video tag.
             </video>
         <?php endif ?>
@@ -37,33 +37,47 @@ $this->title='Blog - '. $post->title;
         </div>
     <?php endif ?>
 
-    <?php $form = ActiveForm::begin([
-        'id' => 'comment-form',
-        'layout' => 'horizontal',
-        'fieldConfig' => [
-            'template' => "{label}\n<div class=\"col-lg-9\">{input}</div>\n<div class=\"col-lg-3\">{error}</div>",
-            'labelOptions' => ['class' => 'col-lg-12 control-label'],
-        ],
-    ]); ?>
+    <?php if (Yii::$app->user->getIsGuest()): ?>
+        <?php $form=ActiveForm::begin([
+            'id'         =>'comment-form',
+            'layout'     =>'horizontal',
+            'fieldConfig'=>[
+                'template'    =>"{label}\n<div class=\"col-lg-9\">{input}</div>\n<div class=\"col-lg-3\">{error}</div>",
+                'labelOptions'=>['class'=>'col-lg-12 control-label'],
+            ],
+        ]); ?>
 
-    <?= $form->field($commentForm, 'post_id')->hiddenInput(['value'=> $post->id])->label(false);?>
+        <?= $form->field($commentForm, 'post_id')
+                 ->hiddenInput(['value'=>$post->id])
+                 ->label(false); ?>
 
-    <?= $form->field($commentForm, 'name')->textInput(['autofocus' => true, 'placeholder' => 'name'])->label(false) ?>
+        <?= $form->field($commentForm, 'name')
+                 ->textInput(['autofocus'=>true, 'placeholder'=>'name'])
+                 ->label(false) ?>
 
-    <?= $form->field($commentForm, 'email')->textInput(['placeholder' => 'email'])->label(false) ?>
+        <?= $form->field($commentForm, 'email')
+                 ->textInput(['placeholder'=>'email'])
+                 ->label(false) ?>
 
-    <?= $form->field($commentForm, 'text')->widget(CKEditor::className(), [
-        'options' => ['rows' => 6],
-        'preset' => 'basic'
-    ])->label(false) ?>
+        <?= $form->field($commentForm, 'text')
+                 ->widget(CKEditor::className(), [
+                     'preset'       =>'custom',
+                     'clientOptions'=>[
+                         'toolbarGroups'=>[
+                             ['name'=>'basicstyles', 'groups'=>['basicstyles', 'cleanup']],
+                         ],
+                     ],
+                 ])
+                 ->label(false) ?>
 
-    <div class="form-group">
-        <div class="">
-            <?= Html::submitButton('Send', ['class' => 'btn btn-primary', 'name' => 'login-button']) ?>
+        <div class="form-group">
+            <div class="">
+                <?= Html::submitButton('Send', ['class'=>'btn btn-primary', 'name'=>'login-button']) ?>
+            </div>
         </div>
-    </div>
 
-    <?php ActiveForm::end(); ?>
+        <?php ActiveForm::end(); ?>
+    <?php endif ?>
 
 </div>
 

@@ -74,6 +74,14 @@ class DashboardController extends Controller
 
 
     /**
+     * Page for client need invite from admin
+     */
+    public function actionClient()
+    {
+        return $this->render('client');
+    }
+
+    /**
      * Creates a new Post model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed

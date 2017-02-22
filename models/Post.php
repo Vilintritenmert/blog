@@ -48,7 +48,7 @@ class Post extends \yii\db\ActiveRecord
             [['author_id'], 'integer'],
             [['title'], 'string', 'max' => 255],
             [['short_description'], 'string', 'max' => 150],
-            [['description'], 'string', 'max' => 1024],
+            [['description'], 'string', 'max' => 5024],
         ];
     }
 

@@ -28,13 +28,18 @@ class SiteController extends Controller
         return [
             'access'=>[
                 'class'=>AccessControl::className(),
-                'only' =>['logout'],
+                'only' =>['logout','signup','login'],
                 'rules'=>[
                     [
                         'actions'=>['logout'],
                         'allow'  =>true,
                         'roles'  =>['@'],
                     ],
+                    [
+                        'actions'=>['signup', 'login'],
+                        'allow' =>true,
+                        'roles' => ['?']
+                    ]
                 ],
             ],
             'verbs' =>[
@@ -102,10 +107,8 @@ class SiteController extends Controller
 
         $model=new CommentForm();
 
-        if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->save()) {
-
+        if ($model->load(Yii::$app->request->post()) && Yii::$app->user->getIsGuest() && $model->validate() && $model->save()) {
             return $this->refresh();
-
         } else {
 
             return $this->render('view', [
@@ -270,8 +273,10 @@ class SiteController extends Controller
                    ->one();
 
         if ($model) {
+
             return $model;
         } else {
+
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }

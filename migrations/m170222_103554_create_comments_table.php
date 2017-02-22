@@ -32,6 +32,11 @@ class m170222_103554_create_comments_table extends Migration
             'post_id'
         );
 
+        $this->createIndex(
+            'idx-comment-created_at',
+            'comments',
+            'created_at'
+        );
 
     }
 
@@ -43,6 +48,11 @@ class m170222_103554_create_comments_table extends Migration
 
         $this->dropIndex(
             'idx-comment-post_id',
+            'comments'
+        );
+
+        $this->dropIndex(
+            'idx-comment-created_at',
             'comments'
         );
 

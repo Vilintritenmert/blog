@@ -3,7 +3,6 @@
 namespace app\commands;
 
 use Yii;
-use yii\base\Exception;
 use yii\console\Controller;
 use app\models\User;
 use app\models\Post;
@@ -55,8 +54,8 @@ class RbacController extends Controller
         {
             $post = new Post;
             $post->title = $faker->text(80);
-            $post->description = $faker->text(200);
-            $post->short_description = $faker->text(100);
+            $post->description = $faker->text(rand(3000,5000));
+            $post->short_description = $faker->text(150);
             $post->author_id = $authorUser->getId();
             $post->publicated = 1;
             $post->save();

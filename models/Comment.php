@@ -54,9 +54,8 @@ class Comment extends \yii\db\ActiveRecord
      */
     public function getCreated()
     {
-        return date('Y-m-d H:i:s', $this->created_at);
+        return $this->created_at;
     }
-
 
     /**
      * @inheritdoc
