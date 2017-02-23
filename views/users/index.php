@@ -6,7 +6,7 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 
-$this->title='Dashboard';
+$this->title='Users';
 ?>
 <div class="dashboard-index">
 
@@ -14,7 +14,7 @@ $this->title='Dashboard';
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
-        <?= Html::a('Create Post', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Send invite', ['invite'], ['class' => 'btn btn-success']) ?>
     </p>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,

@@ -6,6 +6,7 @@ use Yii;
 use yii\db\Expression;
 use yii\web\UploadedFile;
 use app\models\Comment;
+
 /**
  * This is the model class for table "posts".
  *
@@ -42,6 +43,7 @@ class Post extends \yii\db\ActiveRecord
             [['video'], 'string', 'max' => 255],
             [['short_description'], 'string', 'max' => 150],
             [['description'], 'string', 'max' => 5024],
+            [['publicated'], 'boolean']
         ];
     }
 
@@ -78,6 +80,19 @@ class Post extends \yii\db\ActiveRecord
     }
 
     /**
+     * Getter for created
+     *
+     * @return false|string
+     */
+    public function getCreated()
+    {
+        return date('Y-m-d', $this->created_at);
+    }
+
+
+    /**
+     * Need add id;
+     *
      * @param bool $insert
      */
     public function beforeSave($insert)

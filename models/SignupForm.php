@@ -57,7 +57,7 @@ class SignupForm extends Model
 
         if($result)
         {
-            return $user->invite ? $user->setRoleAuthor() : $user->setRoleClient() ;
+            $user->invite ? $user->setRoleAuthor() : $user->setRoleClient() ;
         }
 
         return $user;

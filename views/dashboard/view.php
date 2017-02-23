@@ -12,7 +12,8 @@ $this->params[ 'breadcrumbs' ][]=[
 
 ?>
 <div class="dashboard-view">
-    <?= PostViewWidget::widget([
-        'post'=>$post,
-    ]) ?>
+    <?=PostViewWidget::widget([
+        'post'=>$post
+    ])?>
+
 </div>

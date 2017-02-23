@@ -14,32 +14,21 @@ $this->title='Blog - ' . $post->title;
         'post'=>$post
     ])?>
 
-<!--    <h1>--><?//= $post->title; ?><!--</h1>-->
-<!--    <div class="description">-->
-<!--        --><?php //if ($post->image): ?>
-<!--            <img src="--><?//= $post->image ?><!--" alt="--><?//= $post->title ?><!--">-->
-<!--        --><?php //endif ?>
-<!--        --><?php //if ($post->video): ?>
-<!--            <video width="320" height="240" controls>-->
-<!--                <source src="--><?//= $post->video ?><!--">-->
-<!--                Your browser does not support the video tag.-->
-<!--            </video>-->
-<!--        --><?php //endif ?>
-<!--        --><?//= $post->description ?>
-<!--    </div>-->
     <?php if (count($post->comments)): ?>
-        <div class="comments">
-            <?php foreach ($post->comments as $comment): ?>
-                <div class="comment">
-                    <div class="title">
-                        <?= $comment->name ?>
-                        <div class="pull-right">
-                            <?= $comment->created ?>
+        <div class="container">
+            <div class="comments">
+                <?php foreach ($post->comments as $comment): ?>
+                    <div class="comment">
+                        <div class="title">
+                            <?= $comment->name ?>
+                            <div class="pull-right">
+                                <?= $comment->created ?>
+                            </div>
                         </div>
+                        <div class="text"><?= $comment->text ?></div>
                     </div>
-                    <div class="text"><?= $comment->text ?></div>
-                </div>
-            <?php endforeach; ?>
+                <?php endforeach; ?>
+            </div>
         </div>
     <?php endif ?>
 
@@ -57,9 +46,17 @@ $this->title='Blog - ' . $post->title;
                  ->hiddenInput(['value'=>$post->id])
                  ->label(false); ?>
 
-        <?= $form->field($commentForm, 'name')
-                 ->textInput(['autofocus'=>true, 'placeholder'=>'name'])
-                 ->label(false) ?>
+        <div class="row">
+            <div class="col-md-8">
+                <?= $form->field($commentForm, 'name')
+                         ->textInput(['autofocus'=>true, 'placeholder'=>'name'])
+                         ->label(false) ?>
+            </div>
+            <div class="col-md-1">
+                    <?= Html::submitButton('Send', ['class'=>'btn btn-primary', 'name'=>'login-button']) ?>
+            </div>
+        </div>
+
 
         <?= $form->field($commentForm, 'email')
                  ->textInput(['placeholder'=>'email'])
@@ -76,11 +73,6 @@ $this->title='Blog - ' . $post->title;
                  ])
                  ->label(false) ?>
 
-        <div class="form-group">
-            <div class="">
-                <?= Html::submitButton('Send', ['class'=>'btn btn-primary', 'name'=>'login-button']) ?>
-            </div>
-        </div>
 
         <?php ActiveForm::end(); ?>
     <?php endif ?>

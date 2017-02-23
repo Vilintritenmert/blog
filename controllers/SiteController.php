@@ -75,7 +75,7 @@ class SiteController extends Controller
     public function actionIndex()
     {
         $query      =Post::find();
-        $postsOnPage=10;
+        $postsOnPage=12;
 
         $pages=new Pagination([
             'defaultPageSize'=>$postsOnPage,

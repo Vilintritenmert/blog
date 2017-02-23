@@ -29,7 +29,7 @@ $this->title='Dashboard';
 
             [
                 'class' => 'yii\grid\ActionColumn',
-                'template' => '{update}'
+                'template' => '{view} {update}'
             ],
         ],
     ]); ?>
