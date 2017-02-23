@@ -44,9 +44,12 @@ AppAsset::register($this);
                 Html::a('Login', ['site/login'])
                 .'</li>'.
                 '<li>'.
-                Html::a('Signup', ['site/signup'])
+                Html::a('Sign Up', ['site/signup'])
                 .'</li>')
              : (
+                '<li>'.
+                Html::a('Dashboard', ['/dashboard'])
+                .'</li>'.
                 '<li>'
                 . Html::beginForm(['/site/logout'], 'post')
                 . Html::submitButton(

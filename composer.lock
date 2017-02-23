@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "fd4d79f5c8ac27e719f2e58599ae4be0",
+    "content-hash": "f4a0872811fbe96b9b60e56c8c9aaff6",
     "packages": [
         {
             "name": "2amigos/yii2-ckeditor-widget",
@@ -453,6 +453,22 @@
                 "fixtures"
             ],
             "time": "2016-04-29T12:21:54+00:00"
+        },
+        {
+            "name": "npm-asset/ckeditor-youtube-plugin",
+            "version": "2.1.1",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/ckeditor-youtube-plugin/-/ckeditor-youtube-plugin-2.1.1.tgz",
+                "reference": null,
+                "shasum": "069c2f1119887b863a39b2cf9ac32e3cf3be3423"
+            },
+            "type": "npm-asset-library",
+            "extra": {
+                "npm-asset-directories": [],
+                "npm-asset-scripts": []
+            },
+            "description": "Youtube plugin for CKEditor"
         },
         {
             "name": "swiftmailer/swiftmailer",

@@ -8,20 +8,16 @@ use yii\widgets\LinkPager;
 $this->title='My Yii Application';
 ?>
 <div class="site-index">
-
-
     <div class="body-content">
-
         <div class="row">
             <?php foreach ($posts as $post): ?>
                 <div class="">
                     <h2><?=Html::a($post->title,'/site/view?id='.$post->id)?></a></h2>
 
-                    <p><?php echo $post->description ?></p>
+                    <p><?php echo $post->short_description ?></p>
                 </div>
             <?php endforeach; ?>
         </div>
-
     </div>
 </div>
 

@@ -23,9 +23,8 @@ use yii\web\IdentityInterface;
  */
 class User extends ActiveRecord implements IdentityInterface
 {
-    const STATUS_DELETED = 0;
-    const STATUS_ACTIVE = 10;
-
+    const STATUS_DELETED=0;
+    const STATUS_ACTIVE =10;
 
     /**
      * @inheritdoc
@@ -51,8 +50,27 @@ class User extends ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            ['status', 'default', 'value' => self::STATUS_ACTIVE],
-            ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
+            ['status', 'default', 'value'=>self::STATUS_ACTIVE],
+            ['status', 'in', 'range'=>[self::STATUS_ACTIVE, self::STATUS_DELETED]],
+
+            ['username', 'trim'],
+            ['username', 'required'],
+            ['username', 'unique', 'targetClass' => '\app\models\User', 'message' => 'This username has already been taken.' ,
+             'when' => function ($model, $attribute) {
+                 return $model->{$attribute} !== $model->getOldAttribute($attribute);
+             },],
+            ['username', 'string', 'min' => 2, 'max' => 255],
+
+            ['email', 'trim'],
+            ['email', 'required'],
+            ['email', 'email'],
+            ['email', 'string', 'max' => 255],
+            ['email', 'unique', 'targetClass' => '\app\models\User', 'message' => 'This email address has already been taken.'
+             ,
+             'when' => function ($model, $attribute) {
+                 return $model->{$attribute} !== $model->getOldAttribute($attribute);
+             },],
+
         ];
     }
 
@@ -61,13 +79,13 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function findIdentity($id)
     {
-        return static::findOne(['id' => $id, 'status' => self::STATUS_ACTIVE]);
+        return static::findOne(['id'=>$id, 'status'=>self::STATUS_ACTIVE]);
     }
 
     /**
      * @inheritdoc
      */
-    public static function findIdentityByAccessToken($token, $type = null)
+    public static function findIdentityByAccessToken($token, $type=null)
     {
         throw new NotSupportedException('"findIdentityByAccessToken" is not implemented.');
     }
@@ -76,17 +94,19 @@ class User extends ActiveRecord implements IdentityInterface
      * Finds user by username
      *
      * @param string $username
+     *
      * @return static|null
      */
     public static function findByUsername($username)
     {
-        return static::findOne(['username' => $username, 'status' => self::STATUS_ACTIVE]);
+        return static::findOne(['username'=>$username, 'status'=>self::STATUS_ACTIVE]);
     }
 
     /**
      * Finds user by password reset token
      *
      * @param string $token password reset token
+     *
      * @return static|null
      */
     public static function findByPasswordResetToken($token)
@@ -96,15 +116,17 @@ class User extends ActiveRecord implements IdentityInterface
         }
 
         return static::findOne([
-            'password_reset_token' => $token,
-            'status' => self::STATUS_ACTIVE,
+            'password_reset_token'=>$token,
+            'status'              =>self::STATUS_ACTIVE,
         ]);
     }
+
 
     /**
      * Finds out if password reset token is valid
      *
      * @param string $token password reset token
+     *
      * @return bool
      */
     public static function isPasswordResetTokenValid($token)
@@ -113,8 +135,9 @@ class User extends ActiveRecord implements IdentityInterface
             return false;
         }
 
-        $timestamp = (int) substr($token, strrpos($token, '_') + 1);
-        $expire = Yii::$app->params['user.passwordResetTokenExpire'];
+        $timestamp=(int)substr($token, strrpos($token, '_') + 1);
+        $expire   =Yii::$app->params[ 'user.passwordResetTokenExpire' ];
+
         return $timestamp + $expire >= time();
     }
 
@@ -134,6 +157,25 @@ class User extends ActiveRecord implements IdentityInterface
         return $this->auth_key;
     }
 
+    public function setRoleAuthor()
+    {
+        $this->setRole('author');
+    }
+
+    public function setRoleClient()
+    {
+        $this->setRole('client');
+    }
+
+    public function setRole($roleName)
+    {
+        $manager = Yii::$app->authManager;
+        $manager->revokeAll($this->getId());
+
+        $client = $manager->getRole($roleName);
+        $manager->assign($client, $this->getId());
+    }
+
     /**
      * @inheritdoc
      */
@@ -146,6 +188,7 @@ class User extends ActiveRecord implements IdentityInterface
      * Validates password
      *
      * @param string $password password to validate
+     *
      * @return bool if password provided is valid for current user
      */
     public function validatePassword($password)
@@ -160,7 +203,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function setPassword($password)
     {
-        $this->password_hash = Yii::$app->security->generatePasswordHash($password);
+        $this->password_hash=Yii::$app->security->generatePasswordHash($password);
     }
 
     /**
@@ -168,7 +211,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function generateAuthKey()
     {
-        $this->auth_key = Yii::$app->security->generateRandomString();
+        $this->auth_key=Yii::$app->security->generateRandomString();
     }
 
     /**
@@ -176,7 +219,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function generatePasswordResetToken()
     {
-        $this->password_reset_token = Yii::$app->security->generateRandomString() . '_' . time();
+        $this->password_reset_token=Yii::$app->security->generateRandomString() . '_' . time();
     }
 
     /**
@@ -184,6 +227,61 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function removePasswordResetToken()
     {
-        $this->password_reset_token = null;
+        $this->password_reset_token=null;
     }
+
+
+    /**
+     * Relationship with invits
+     */
+    public function getInvite()
+    {
+        return $this->hasOne(Invite::className(), ['email'=>'email']);
+    }
+
+
+    /**
+     * Is Admin
+     *
+     * @return bool
+     */
+    public function IsAdmin()
+    {
+        return $this->is('admin');
+    }
+
+    /**
+     * Is Author
+     *
+     * @return bool
+     */
+    public function IsAuthor()
+    {
+        return $this->is('author');
+    }
+
+
+    /**
+     * check Role
+     *
+     * @param $roleName
+     *
+     * @return bool
+     */
+    public function is($roleName)
+    {
+        $roles=array_keys(Yii::$app->authManager->getRolesByUser($this->getId()));
+
+        return in_array($roleName, $roles);
+    }
+
+
+    /**
+     * Relationship with posts
+     */
+    public function getPosts()
+    {
+        return $this->hasMany(Post::className(), ['author_id', 'id']);
+    }
+
 }

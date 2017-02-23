@@ -6,9 +6,8 @@ use Yii;
 use yii\filters\AccessControl;
 use yii\web\NotFoundHttpException;
 use yii\web\Controller;
-use yii\filters\VerbFilter;
 use app\models\Post;
-use yii\data\Pagination;
+use app\models\PostSearch;
 
 class DashboardController extends Controller
 {
@@ -17,7 +16,7 @@ class DashboardController extends Controller
      *
      * @var string
      */
-    public $defaultAction = 'index';
+    public $defaultAction='index';
 
     /**
      * @inheritdoc
@@ -25,12 +24,30 @@ class DashboardController extends Controller
     public function behaviors()
     {
         return [
-            'access' => [
-                'class' => AccessControl::className(),
-                'rules' => [
+            'access'=>[
+                'class'=>AccessControl::className(),
+                'rules'=>[
                     [
-                        'allow' => true,
-                        'roles' => ['@'],
+                        'allow'        =>true,
+                        'actions'      =>['index', 'create', 'update', 'delete', 'view'],
+                        'matchCallback'=>function ($rule, $action) {
+                            $user=Yii::$app->user->identity;
+
+                            if ($user && ($user->isAdmin() || $user->isAuthor())){
+                                return true;
+                            } else {
+                                return $action->controller->redirect('dashboard/client');
+                            }
+                        },
+                    ],
+                    [
+                        'allow'        =>true,
+                        'actions'      =>['client'],
+                        'matchCallback'=>function ($rule, $action) {
+                            $roles=array_keys(Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId()));
+
+                            return in_array('client', $roles);
+                        },
                     ],
                 ],
             ],
@@ -43,8 +60,8 @@ class DashboardController extends Controller
     public function actions()
     {
         return [
-            'error' => [
-                'class' => 'yii\web\ErrorAction',
+            'error'=>[
+                'class'=>'yii\web\ErrorAction',
             ],
         ];
     }
@@ -56,22 +73,14 @@ class DashboardController extends Controller
      */
     public function actionIndex()
     {
-        $query = Post::find();
+        $searchModel =new PostSearch();
+        $dataProvider=$searchModel->search(Yii::$app->request->queryParams);
 
-        $pagination = new Pagination([
-            'defaultPageSize' => 5,
-            'totalCount' => $query->count(),
+        return $this->render('index', [
+            'searchModel' =>$searchModel,
+            'dataProvider'=>$dataProvider,
         ]);
-
-        $posts = $query->orderBy('name')
-                           ->offset($pagination->offset)
-                           ->limit($pagination->limit)
-                           ->orderBy('created_at')
-                           ->all();
-
-        return $this->render('index' ,['posts' => $posts ]);
     }
-
 
     /**
      * Page for client need invite from admin
@@ -88,13 +97,13 @@ class DashboardController extends Controller
      */
     public function actionCreate()
     {
-        $model = new Post();
+        $model=new Post;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['view', 'id'=>$model->id]);
         } else {
             return $this->render('create', [
-                'model' => $model,
+                'model'=>$model,
             ]);
         }
     }
@@ -102,55 +111,72 @@ class DashboardController extends Controller
     /**
      * Updates an existing Post model.
      * If update is successful, the browser will be redirected to the 'view' page.
+     *
      * @param integer $id
+     *
      * @return mixed
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
+        $model=$this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['view', 'id'=>$model->id]);
         } else {
             return $this->render('update', [
-                'model' => $model,
+                'model'=>$model,
             ]);
         }
     }
+
     /**
      * Show Post
+     *
      * @param integer $id
+     *
      * @return mixed
      */
     public function actionView($id)
     {
-        $model = $this->findModel($id);
+        $post=$this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
-        }
+        return $this->render('view', [
+            'post'=>$post,
+        ]);
     }
 
+    /**
+     * Deletes an existing Post model.
+     * If deletion is successful, the browser will be redirected to the 'index' page.
+     *
+     * @param integer $id
+     *
+     * @return mixed
+     */
+    public function actionDelete($id)
+    {
+        $this->findModel($id)
+             ->delete();
+
+        return $this->redirect(['index']);
+    }
 
     /**
      * Finds the Post model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
+     *
      * @param integer $id
+     *
      * @return Post the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Post::findOne($id)) !== null) {
+        if (($model=Post::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
-
 
 }

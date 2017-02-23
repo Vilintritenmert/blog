@@ -69,7 +69,6 @@ class CommentForm extends Model
      */
     public function save()
     {
-
         if($this->validate($this->attributes))
         {
             $comment         =new Comment();

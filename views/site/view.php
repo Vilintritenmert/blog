@@ -4,23 +4,29 @@
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use dosamigos\ckeditor\CKEditor;
+use app\components\PostViewWidget;
 
 $this->title='Blog - ' . $post->title;
 ?>
 <div class="site-view">
-    <h1><?= $post->title; ?></h1>
-    <div class="description">
-        <?php if ($post->image): ?>
-            <img src="<?= $post->image ?>" alt="<?= $post->title ?>">
-        <?php endif ?>
-        <?php if ($post->video): ?>
-            <video width="320" height="240" controls>
-                <source src="<?= $post->video ?>">
-                Your browser does not support the video tag.
-            </video>
-        <?php endif ?>
-        <?= $post->description ?>
-    </div>
+
+    <?=PostViewWidget::widget([
+        'post'=>$post
+    ])?>
+
+<!--    <h1>--><?//= $post->title; ?><!--</h1>-->
+<!--    <div class="description">-->
+<!--        --><?php //if ($post->image): ?>
+<!--            <img src="--><?//= $post->image ?><!--" alt="--><?//= $post->title ?><!--">-->
+<!--        --><?php //endif ?>
+<!--        --><?php //if ($post->video): ?>
+<!--            <video width="320" height="240" controls>-->
+<!--                <source src="--><?//= $post->video ?><!--">-->
+<!--                Your browser does not support the video tag.-->
+<!--            </video>-->
+<!--        --><?php //endif ?>
+<!--        --><?//= $post->description ?>
+<!--    </div>-->
     <?php if (count($post->comments)): ?>
         <div class="comments">
             <?php foreach ($post->comments as $comment): ?>

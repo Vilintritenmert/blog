@@ -78,7 +78,6 @@ class Comment extends \yii\db\ActiveRecord
      */
     public function beforeSave($insert)
     {
-        //$this->created_at =  microtime() ;
 
         return parent::beforeSave($insert);
     }

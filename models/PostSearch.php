@@ -8,18 +8,20 @@ use yii\data\ActiveDataProvider;
 use app\models\Post;
 
 /**
- * PostSearch represents the model behind the search form about `app\modules\blog\models\Post`.
+ * PostSearch represents the model behind the search form about `app\models\Post`.
  */
 class PostSearch extends Post
 {
+    public $author;
+    public $comments;
+
     /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
-            [['id', 'author_id'], 'integer'],
-            [['title', 'resource', 'short_description', 'description', 'created_at', 'publicated'], 'safe'],
+            [['title', 'author', 'comments', 'short_description', 'description', 'created_at', 'publicated'], 'safe'],
         ];
     }
 
@@ -45,9 +47,16 @@ class PostSearch extends Post
 
         // add conditions that should always apply here
 
+        $query->joinWith(['author']);
+
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
+
+        $dataProvider->sort->attributes['author'] = [
+            'asc' => ['users.username' => SORT_ASC],
+            'desc' => ['users.username' => SORT_DESC],
+        ];
 
         $this->load($params);
 
@@ -59,14 +68,12 @@ class PostSearch extends Post
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'id' => $this->id,
             'author_id' => $this->author_id,
             'created_at' => $this->created_at,
             'publicated' => $this->publicated,
         ]);
 
         $query->andFilterWhere(['like', 'title', $this->title])
-            ->andFilterWhere(['like', 'resource', $this->resource])
             ->andFilterWhere(['like', 'short_description', $this->short_description])
             ->andFilterWhere(['like', 'description', $this->description]);
 

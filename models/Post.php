@@ -12,7 +12,6 @@ use app\models\Comment;
  * @property integer $id
  * @property string $title
  * @property integer $author_id
- * @property string $resource
  * @property string $short_description
  * @property string $description
  * @property string $created_at
@@ -21,14 +20,6 @@ use app\models\Comment;
 class Post extends \yii\db\ActiveRecord
 {
 
-    /**
-     * Variables for fila save
-     *
-     * @var
-     */
-    protected $string;
-    protected $image;
-    protected $fileName;
 
     /**
      * @inheritdoc
@@ -47,6 +38,8 @@ class Post extends \yii\db\ActiveRecord
             [['title', 'short_description', 'description'], 'required'],
             [['author_id'], 'integer'],
             [['title'], 'string', 'max' => 255],
+            [['image'], 'string', 'max' => 255],
+            [['video'], 'string', 'max' => 255],
             [['short_description'], 'string', 'max' => 150],
             [['description'], 'string', 'max' => 5024],
         ];
@@ -68,7 +61,6 @@ class Post extends \yii\db\ActiveRecord
         ];
     }
 
-
     /**
      * Relation Ship with comment
      */
@@ -77,7 +69,13 @@ class Post extends \yii\db\ActiveRecord
             ->orderBy('created_at');
     }
 
+    /**
+     * Relation Ship with Author
+     */
+    public function getAuthor(){
 
+        return $this->hasOne(User::className(), ['id' => 'author_id']);
+    }
 
     /**
      * @param bool $insert
@@ -87,18 +85,7 @@ class Post extends \yii\db\ActiveRecord
 
         if($this->isNewRecord)
         {
-            $this->created_at = new Expression('NOW()');
-
-//            $this->string = substr(uniqid('img'), 0, 12);
-//
-//            $this->image = UploadedFile::getInstance($this, 'resource');
-//            $this->fileName = 'img/blog/' . $this->string . '.' .$this->image->extension;
-//            $this->image->saveAs($this->fileName);
-//
-//            $this->resource = '/' . $this->fileName;
-        } else {
-
-
+            $this->author_id =Yii::$app->user->getId();
         }
 
         return parent::beforeSave($insert);

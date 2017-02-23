@@ -18,14 +18,10 @@ class m170222_103332_create_posts_table extends Migration
                                       ->notNull(),
             'title'            =>$this->string(255)
                                       ->notNull(),
-            'description'      =>$this->string(5024)
-                                      ->notNull(),
             'short_description'=>$this->string(255)
                                       ->notNull(),
-            'image'            =>$this->string(255)
-                                      ->null(),
-            'video'            =>$this->string(255)
-                                      ->null(),
+            'description'      =>$this->string(5024)
+                                      ->notNull(),
             'created_at'       =>'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
             'publicated'       =>$this->boolean()
                                       ->defaultValue(false),

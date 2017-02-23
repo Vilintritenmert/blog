@@ -21,15 +21,11 @@ $this->title='Dashboard';
         'filterModel' => $searchModel,
         'columns' => [
             'id',
-            'title',
-            [
-                'attribute'=>'author_id',
-                'value'=>'author.email'
-            ],
-
+            'username',
+            'email',
             [
                 'class' => 'yii\grid\ActionColumn',
-                'template' => '{update}'
+                'template' => '{update}',
             ],
         ],
     ]); ?>
